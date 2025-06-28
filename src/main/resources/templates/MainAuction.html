@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auction Main Page</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+    <style>
+        body {
+            background: url('https://t3.ftcdn.net/jpg/05/73/34/02/360_F_573340270_dxzNvPan30gMk6YsHiYvR9JnX87ulIzc.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+        .navbar {
+            background-color: #003366;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f0e68c !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-family: 'Georgia', serif;
+            text-transform: capitalize;
+        }
+        .nav-link {
+            color: #ffffff !important;
+            font-size: 1rem;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .btn-outline-success {
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
+        .btn-outline-success:hover {
+            background-color: #ffffff !important;
+            color: #003366 !important;
+        }
+        .container {
+            padding: 10px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .card-body {
+            transition: background-color 0.3s ease;
+        }
+        .card:hover .card-body {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        header {
+            margin-bottom: 30px;
+        }
+        .auction-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        footer {
+            margin-top: 20px;
+            background-color: #003366;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .slider-text {
+            position: relative;
+            color: #ffffff;
+            padding: 10px;
+            font-size: 1.2rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .slider-text span {
+            display: inline-flex;
+            position: relative;
+            animation: slideText 12s linear infinite;
+        }
+
+        @keyframes slideText {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            VINTAGE VALUE
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/customer/about}">About Us</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ROLE_USER')">
+                    <a class="nav-link" th:href="@{/customer/{customerId}/profile/view(customerId=${customer.id})}">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/harsh/MainAuction}">Auction List</a>
+                </li>
+                <li class="nav-item" th:if="${customer != null}">
+                    <a class="nav-link" th:href="@{/customer/bids}">Bid History</a>
+                </li>
+            </ul>
+            <form class="d-flex" th:action="@{/search}" method="get">
+                <input class="form-control me-2" type="search" placeholder="Search" name="query" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <form th:action="@{/perform_logout}" method="post" th:if="${#authentication.principal != null}">
+                <button type="submit" class="btn btn-danger ms-3">Logout</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<div class="slider-text">
+    <span>Welcome to VINTAGE VALUE! Explore and bid on exclusive items.</span>
+</div>
+
+
+<div class="container mt-4">
+    <div class="auction-title">Active Auctions</div>
+
+    <div class="row">
+        <div th:if="${#lists.isEmpty(products)}" class="text-center mb-3">
+            <p class="text-warning">No products available for bidding at the moment.</p>
+        </div>
+        <div th:each="product : ${products}" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100">
+                <img th:src="${product.imageUrl}" alt="Product image" class="card-img-top" style="height: 200px; object-fit: contain;">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                    <p class="card-text" th:text="${product.description}">Product Description</p>
+                    <p>
+                        <strong>Starting Price:</strong> <span th:text="${product.startingPrice}">$0</span>
+                    </p>
+                    <p>
+                        <strong>Ends On:</strong> <span th:text="${#temporals.format(product.auctionEndTime, 'yyyy-MM-dd HH:mm')}">End Time</span>
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{'/bid/' + ${product.id}}" class="btn btn-primary" sec:authorize="hasRole('ROLE_USER')">Place Bid</a>
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a th:href="@{'/admin/editAuction/' + ${product.id}}" class="btn btn-success">Edit</a>
+                            <form th:action="@{'/admin/deleteAuction/' + ${product.id}}" method="post" style="display:inline;">
+                                <input type="hidden" name="_method" value="DELETE" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4" sec:authorize="hasRole('ROLE_ADMIN')">
+        <a th:href="@{/admin/createAuction}" class="btn btn-success">Create New Auction</a>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 Classic Deals. All Rights Reserved.</p>
+    <p>
+        Follow us on:
+        <a href="#" style="color: #f0e68c; text-decoration: none;">Facebook</a> |
+        <a href="#" style="color: #f0e68c; text-decoration: none;">Twitter</a> |
+        <a href="#" style="color: #f0e68c; text-decoration: none;">Instagram</a>
+    </p>
+</footer>
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

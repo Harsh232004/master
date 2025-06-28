@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+    <style>
+        body {
+            background: url('https://t3.ftcdn.net/jpg/08/69/68/78/240_F_869687835_BUM0fxRSPYmIuwa8N9TU5efd3wL23XJg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 5%;
+            max-width: 800px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .invalid-feedback {
+            font-size: 0.9rem;
+            color: red;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .d-flex {
+            margin-top: 1.5rem;
+        }
+
+        .form-control:disabled {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${editable} ? 'Edit Profile' : 'View Profile'">View/Edit Profile</h1>
+
+    <!-- Profile Edit Form -->
+    <div th:if="${editable}">
+        <form th:action="@{'/customer/' + ${customerId} + '/profile/save'}" th:object="${profile}" method="post" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" required />
+                <div class="invalid-feedback">
+                    Please enter your name.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" th:field="*{email}" class="form-control" required />
+                <div class="invalid-feedback">
+                    Please enter a valid email.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">Phone Number</label>
+                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" required />
+                <div class="invalid-feedback">
+                    Please enter a valid phone number.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea id="bio" th:field="*{bio}" class="form-control" rows="4" placeholder="Tell us something about yourself"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+        </form>
+    </div>
+
+    <!-- Profile View -->
+    <div th:if="${!editable}">
+        <p><strong>Full Name:</strong> <span th:text="${profile.name}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${profile.email}"></span></p>
+        <p><strong>Phone Number:</strong> <span th:text="${profile.phoneNumber}"></span></p>
+        <p><strong>Bio:</strong></p>
+        <p><span th:text="${profile.bio}"></span></p>
+
+        <div class="d-flex justify-content-between">
+            <a th:href="@{'/customer/' + ${customerId} + '/profile/edit'}" class="btn btn-secondary">Edit Profile</a>
+            <a th:href="@{'/harsh/MainAuction'}" class="btn btn-primary">Back to Home</a>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+<script>
+    // Enable Bootstrap validation styles
+    (function () {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+</body>
+</html>
