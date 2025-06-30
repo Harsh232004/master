@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+    <style>
+        body {
+            background-image: url('https://imgs.search.brave.com/BwrzeTmmoGw6kJIFgQzkjv_XLUFX0Zcu4LKBgQ52hQM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvZ3JlZW4tbzg0/bXY0ZTM0a2didjhl/ci5qcGc'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Login</h1>
+    <form th:action="@{/perform_login}" method="post" class="needs-validation" novalidate>
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            Invalid username or password.
+        </div>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" autocomplete="off" class="form-control form-control-sm" style="width: 250px;" required>
+            <div class="invalid-feedback">
+                Please enter your username.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control form-control-sm" style="width: 250px;" required>
+            <div class="invalid-feedback">
+                Please enter your password.
+            </div>
+        </div>
+        <div>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+    <br>
+    <a th:href="@{/register}" class="btn btn-link">Register as a new user</a>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+<script>
+    (function () {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+</body>
+</html>
