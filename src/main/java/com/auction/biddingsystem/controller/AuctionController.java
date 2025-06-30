@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -44,10 +45,10 @@ public class AuctionController {
     @PostMapping("/bid")    
     @PreAuthorize("hasRole('ROLE_USER')")
     public String placeBid(@RequestParam("productId") Long productId,
-                           @RequestParam("bidAmount") double bidAmount,
+                           @RequestParam("bidAmount") BigDecimal bidAmount,
                            Principal principal) {
         Optional<Customer> bidder = userService.findCustomerByUsername(principal.getName());
-        Optional<Product> product = productService.findById(productId);
+        Optional<Product> product = productService.getProductById(productId);
 
         if (bidder.isEmpty() || product.isEmpty()) {
             return "redirect:/errorPage";
@@ -77,7 +78,7 @@ public class AuctionController {
         }
 
         try {
-            productService.save(product);
+            productService.saveProduct(product);
         } catch (Exception e) {
             return "redirect:/errorPage";
         }

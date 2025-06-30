@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -44,9 +45,10 @@ public class ProductService {
     }
 
 
-    public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
+
 
 
     public List<Product> findAllProducts() {
@@ -85,7 +87,7 @@ public class ProductService {
     // Get the highest bid amount for a product
     public BigDecimal getHighestBidAmount(Product product) {
         List<Bid> bids = bidRepository.findByProductOrderByBidAmountDesc(product);
-        return bids.isEmpty() ? product.getStartingPrice() : bids.get(0).getBidAmount();
+        return bids.isEmpty() ? product.getStartingPrice() : bids.getFirst().getBidAmount();
     }
 
     // Retrieve all bids by a customer

@@ -5,6 +5,7 @@ import com.auction.biddingsystem.model.Bid;
 import com.auction.biddingsystem.model.Customer;
 import com.auction.biddingsystem.model.Product;
 import com.auction.biddingsystem.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class CustomerController {
     }
 
     @PostMapping("/placeBid")
-    public ResponseEntity<?> placeBid(@RequestParam Long productId, @RequestParam double bidAmount, Principal principal) {
+    public ResponseEntity<?> placeBid(@RequestParam Long productId, @RequestParam BigDecimal bidAmount, Principal principal) {
         try {
             String username = principal.getName();
             Customer customer = customerRepository.findByUsername(username)
@@ -62,8 +63,10 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+        // If getProductById returns Optional<Product>, use this
+        Optional<Product> product = productService.getProductById(id);
+        return product.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     @PostMapping("/save")

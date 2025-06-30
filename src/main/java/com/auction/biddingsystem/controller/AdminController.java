@@ -2,14 +2,14 @@ package com.auction.biddingsystem.controller;
 
 import com.auction.biddingsystem.model.Product;
 import com.auction.biddingsystem.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,14 +31,10 @@ public class AdminController {
     @GetMapping("/auctionForm")
     public String showAuctionForm(@RequestParam(value = "id", required = false) Long id, Model model) {
         if (id != null) {
-            Product product = productService.getProductById(id);
-            if (product == null) {
-                logger.warn("Product with ID {} not found", id);
-                model.addAttribute("errorMessage", "Product not found.");
-                return "redirect:/harsh/MainAuction?error=notfound";
-            }
-            model.addAttribute("isEditMode", true);
-            model.addAttribute("product", product);
+            Optional<Product> product = productService.getProductById(id);
+            logger.warn("Product with ID {} not found", id);
+            model.addAttribute("errorMessage", "Product not found.");
+            return "redirect:/harsh/MainAuction?error=notfound";
         } else {
             model.addAttribute("isEditMode", false);
             model.addAttribute("product", new Product());
